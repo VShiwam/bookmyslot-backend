@@ -11,6 +11,7 @@ app.add_middleware(
     allow_origins=[
         "https://bookmyslot-frontend-7aru.vercel.app",
         "https://bookmyslot-frontend-jz41-b5enic23b-vshiwams-projects.vercel.app",
+        "https://bookmyslot-frontend-7aru-c95f3pzgy-vshiwams-projects.vercel.app",
         "http://localhost:5173"  # for local dev
     ],
     allow_credentials=True,
