@@ -8,7 +8,7 @@ app = FastAPI()
 # CORS middleware to allow frontend calls
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://bookmyslot-frontend.vercel.app"],
+    allow_origins=["https://bookmyslot-frontend-jz41.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
