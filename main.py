@@ -5,22 +5,26 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# CORS middleware to allow frontend calls
+# ✅ CORS: Allow frontend calls from multiple Vercel URLs
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://bookmyslot-frontend-7aru.vercel.app"],
+    allow_origins=[
+        "https://bookmyslot-frontend-7aru.vercel.app",
+        "https://bookmyslot-frontend-jz41-b5enic23b-vshiwams-projects.vercel.app",
+        "http://localhost:5173"  # for local dev
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# In-memory storage
+# ✅ In-memory storage (will reset on every restart)
 events_db = []
 bookings_db: Dict[int, List[Dict]] = {}  # event_id -> list of bookings
 
-# Schemas
+# ✅ Pydantic Schemas
 class Slot(BaseModel):
-    time: str  # ISO 8601 format
+    time: str  # ISO 8601 format (UTC)
     max_bookings: int
 
 class Event(BaseModel):
@@ -33,7 +37,12 @@ class Booking(BaseModel):
     email: str
     slot_time: str
 
-# Create event
+# ✅ Root route
+@app.get("/")
+def root():
+    return {"status": "✅ BookMySlot API is live and working!"}
+
+# ✅ Create a new event
 @app.post("/events")
 def create_event(event: Event):
     events_db.append(event)
@@ -41,19 +50,19 @@ def create_event(event: Event):
     bookings_db[event_id] = []
     return {"message": "Event created", "id": event_id, "event": event}
 
-# List all events
+# ✅ List all events
 @app.get("/events")
 def get_events():
     return [{"id": i, **event.dict()} for i, event in enumerate(events_db)]
 
-# Get one event by ID
+# ✅ Get event details
 @app.get("/events/{event_id}")
 def get_event(event_id: int):
     if event_id < 0 or event_id >= len(events_db):
         raise HTTPException(status_code=404, detail="Event not found")
     return events_db[event_id]
 
-# Book a slot
+# ✅ Book a time slot
 @app.post("/events/{event_id}/bookings")
 def book_slot(event_id: int, booking: Booking):
     if event_id < 0 or event_id >= len(events_db):
@@ -62,12 +71,12 @@ def book_slot(event_id: int, booking: Booking):
     event = events_db[event_id]
     existing = bookings_db[event_id]
 
-    # Prevent duplicate booking
+    # Prevent duplicate bookings
     for b in existing:
         if b["email"] == booking.email and b["slot_time"] == booking.slot_time:
             raise HTTPException(status_code=400, detail="Already booked this slot")
 
-    # Validate slot and booking limit
+    # Check if slot exists and has space
     slot = next((s for s in event.slots if s.time == booking.slot_time), None)
     if not slot:
         raise HTTPException(status_code=404, detail="Slot not found")
@@ -80,7 +89,7 @@ def book_slot(event_id: int, booking: Booking):
     bookings_db[event_id].append(booking.dict())
     return {"message": "Booking successful", "booking": booking}
 
-# (Optional) View bookings by email
+# ✅ (Optional) View bookings by email
 @app.get("/users/{email}/bookings")
 def get_bookings_by_email(email: str):
     result = []
