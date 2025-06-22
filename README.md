@@ -12,7 +12,7 @@ A simple fullstack application (like Calendly) to create events and let others b
 
 ## 🔥 Live Demo
 
-- **Frontend**: [bookmyslot-frontend.vercel.app](https://bookmyslot-frontend-jz41-b5enic23b-vshiwams-projects.vercel.app/)
+- **Frontend**: [bookmyslot-frontend.vercel.app](https://bookmyslot-frontend-7aru.vercel.app)
 - **Backend API**: [bookmyslot-backend.onrender.com](https://bookmyslot-backend-3.onrender.com)
 
 ---
